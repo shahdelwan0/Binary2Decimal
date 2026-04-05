@@ -50,7 +50,7 @@ const App = () => {
         <div className="btn">
           <button
             onClick={() => handleOnClick(binaryNum)}
-            className="bg-gray-400 text-black p-3 cursor-pointer"
+            className="border bg-gray-500 text-white p-3 cursor-pointer rounded "
           >
             Convert
           </button>
