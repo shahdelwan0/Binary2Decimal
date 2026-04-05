@@ -3,31 +3,31 @@ pipeline {
   environment {
     DOCKER_IMAGE = 'shahdelwan/binary2dec'
     DOCKER_TAG = "${env.BUILD_NUMBER}"
+    DOCKER_HUB_CREDS = credentials('dockerhub-credentials')
   }
   stages{
-      stage('Fetch code from github repo')
-      {
+      stage('Fetch code from github repo') {
         steps{
             git branch: 'main',
             url: 'https://github.com/shahdelwan0/Binary2Decimal.git'
         }
       }
-      stage("Build docker image") 
-      {
+      stage("Build docker image") {
         steps {
           script {
             docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
           }
         }
       }
-      stage("push to docker hub") 
-      {
+      stage("push to docker hub") {
         steps {
           script {
-            docker.withDockerRegistry('', 'dockerhub-credentials') {
-              docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
-              docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push('latest')
-            }
+            sh """
+              echo "${DOCKER_HUB_CREDS_PSW}" | docker login -u "${DOCKER_HUB_CREDS_USR}" --password-stdin
+              docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+              docker push ${DOCKER_IMAGE}:latest
+              docker logout
+            """
           }
         }
       }
@@ -49,6 +49,4 @@ pipeline {
         echo 'Deployment failed'
       }
   }
-
-
 }
