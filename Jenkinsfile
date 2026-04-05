@@ -1,7 +1,5 @@
 pipeline {
-  agent{
-      any
-  }
+  agent any
   environment {
     DOCKER_IMAGE = 'shahdelwan/binary2dec'
     DOCKER_TAG = "${env.BUILD_NUMBER}"
