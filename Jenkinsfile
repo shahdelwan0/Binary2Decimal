@@ -3,7 +3,6 @@ pipeline {
   environment {
     DOCKER_IMAGE = 'shahdelwan/binary2dec'
     DOCKER_TAG = "${env.BUILD_NUMBER}"
-    DOCKER_HUB_CREDS = credentials('dockerhub-credentials')
   }
   stages{
       stage('Fetch code from github repo') {
@@ -22,18 +21,11 @@ pipeline {
       stage("push to docker hub") {
         steps {
           script {
-            sh """
-              echo "${DOCKER_HUB_CREDS_PSW}" | docker login -u "${DOCKER_HUB_CREDS_USR}" --password-stdin
-              
-              # Push the tagged image
-              docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-              
-              # Tag and push as 'latest'
-              docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
-              docker push ${DOCKER_IMAGE}:latest
-              
-              docker logout
-            """
+            docker.withRegistry('', 'dockerhub-credentials') {
+              def image = docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}")
+              image.push()
+              image.push('latest')
+            }
           }
         }
       }
