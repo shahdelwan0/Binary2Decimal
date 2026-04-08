@@ -19,6 +19,11 @@ const App = () => {
   };
   const handleOnChange = (e) => {
     let inputField = e.target;
+    inputField.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        document.getElementById("btn").click();
+      }
+    });
     inputField.addEventListener("beforeinput", (e) => {
       const regex = /^[01]+$/;
       if (e.data && !regex.test(e.data)) {
@@ -49,6 +54,7 @@ const App = () => {
         </div>
         <div className="btn">
           <button
+            id="btn"
             onClick={() => handleOnClick(binaryNum)}
             className="border bg-gray-500 text-white p-3 cursor-pointer rounded "
           >
@@ -56,7 +62,9 @@ const App = () => {
           </button>
         </div>
         <div className="res">
-          <span className={`block text-lg h-5 ${res ? "visible" : "invisible"}`}>
+          <span
+            className={`block text-lg h-5 ${res ? "visible" : "invisible"}`}
+          >
             {res}
           </span>
         </div>
